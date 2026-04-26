@@ -59,7 +59,7 @@ const About = () => {
           </p>
         </div>
       </div>
-      <NewsletterBox />
+      <NewsLetterBox />
     </div>
   );
 };
