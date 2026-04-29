@@ -8,6 +8,7 @@ import {
   userOrders,
   updateStatus,
   verifyStripe,
+  updatePaymentStatus
 } from "../controllers/orderController.js";
 
 const orderRouter = express.Router();
@@ -24,9 +25,11 @@ orderRouter.post('/stripe', authUser , placeOrderStripe); //stripe
 // User Feature
 orderRouter.post('/userorders', authUser , userOrders);
 
-// Verify Payment
+// Verify Stripe Payment
 orderRouter.post('/verifyStripe', authUser, verifyStripe );
 
+// Verify COD Payment
+orderRouter.post('/payment-status', adminAuth, updatePaymentStatus);
 
 
 export default orderRouter;

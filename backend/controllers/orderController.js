@@ -136,6 +136,18 @@ const updateStatus = async (req, res) => {
   }
 };
 
+
+const updatePaymentStatus = async (req, res) => {
+  try {
+    const { orderId, payment } = req.body;
+    await orderModel.findByIdAndUpdate(orderId, { payment });
+    res.json({ success: true, message: "Payment Status Updated" });
+  } catch (error) {
+    res.json({ success: false, message: error.message });
+  }
+};
+
+
 export {
   placeOrder,
   placeOrderStripe,
@@ -143,4 +155,5 @@ export {
   userOrders,
   updateStatus,
   verifyStripe,
+  updatePaymentStatus,
 };

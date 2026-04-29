@@ -43,6 +43,22 @@ const Orders = ({ token }) => {
     }
   };
 
+  const paymentStatusHandler = async (event, orderId) => {
+    try {
+      const response = await axios.post(
+        backendUrl + "/api/order/payment-status",
+        { orderId, payment: event.target.checked },
+        { headers: { token } },
+      );
+      if (response.data.success) {
+        await fetchAllOrders();
+        toast.success(response.data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
   useEffect(() => {
     fetchAllOrders();
   }, [token]);
@@ -96,7 +112,28 @@ const Orders = ({ token }) => {
                 Items: {order.items.length}
               </p>
               <p className="mt-3">Method: {order.paymentMethod}</p>
-              <p>Payment: {order.payment ? "Done" : "Pending"}</p>
+
+              {/* Conditional Rendering: Agar COD hai toh checkbox dikhao, warna sirf status text */}
+              {order.paymentMethod === "COD" ? (
+                <div className="flex items-center gap-2 mt-2">
+                  <input
+                    type="checkbox"
+                    checked={order.payment}
+                    onChange={(e) => paymentStatusHandler(e, order._id)}
+                    id={`payment-${order._id}`}
+                    className="cursor-pointer w-4 h-4"
+                  />
+                  <label
+                    htmlFor={`payment-${order._id}`}
+                    className="cursor-pointer"
+                  >
+                    Payment: {order.payment ? "Done" : "Pending"}
+                  </label>
+                </div>
+              ) : (
+                <p>Payment: {order.payment ? "Done" : "Pending"}</p>
+              )}
+
               <p>Date: {new Date(order.date).toLocaleDateString()}</p>
             </div>
             <p className="text-sm sm:text-[15px]">
