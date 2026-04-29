@@ -4,6 +4,7 @@ import { Link, NavLink, useLocation } from "react-router-dom";
 import { ShopContext } from "../context/ShopContext";
 const Navbar = () => {
   const [visible, setVisible] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false); // Ye line add karein
   const {
     setShowSearch,
     getCartCount,
@@ -69,38 +70,42 @@ const Navbar = () => {
           />
         )}
         <div className="group relative">
-          <img
-            onClick={() => {
-              token ? null : navigate("/login");
-            }}
-            className="w-5 cursor-pointer"
-            src={assets.profile_icon}
-            alt=""
-          />
-          {/*  Dropdown menu */}
-          {token && (
-            <div className="group-hover:block hidden absolute dropdown-menu right-0 pt-4">
-              <div className="flex flex-col gap-2 w-36 py-3 px-5 bg-slate-100 text-gray-500 rounded">
-                <Link to="/login">
-                  <p className="cursor-pointer hover:text-black">My Profile</p>
-                </Link>
-
-                <p
-                  onClick={() => {
-                    navigate("/orders");
-                  }}
-                  className="cursor-pointer hover:text-black"
-                >
-                  Orders
-                </p>
-
-                <p onClick={logout} className="cursor-pointer hover:text-black">
-                  Logout
-                </p>
-              </div>
-            </div>
-          )}
-        </div>
+  <img
+    onClick={() => {
+      if (token) {
+        setShowDropdown(!showDropdown); // Click par toggle hoga
+      } else {
+        navigate("/login");
+      }
+    }}
+    className="w-5 cursor-pointer"
+    src={assets.profile_icon}
+    alt=""
+  />
+  
+  {/* Dropdown Menu logic update karein */}
+  {token && (
+    <div className={`${showDropdown ? 'block' : 'hidden'} group-hover:block absolute dropdown-menu right-0 pt-4 z-50`}>
+      <div className="flex flex-col gap-2 w-36 py-3 px-5 bg-slate-100 text-gray-500 rounded shadow-lg">
+        <Link to="/login" onClick={() => setShowDropdown(false)}>
+          <p className="cursor-pointer hover:text-black">My Profile</p>
+        </Link>
+        <p
+          onClick={() => {
+            navigate("/orders");
+            setShowDropdown(false);
+          }}
+          className="cursor-pointer hover:text-black"
+        >
+          Orders
+        </p>
+        <p onClick={() => { logout(); setShowDropdown(false); }} className="cursor-pointer hover:text-black">
+          Logout
+        </p>
+      </div>
+    </div>
+  )}
+</div>
         <Link to="/cart" className="relative">
           <img src={assets.cart_icon} className="w-5 min-w-5" alt="" />
           <p className="absolute -right-1.25 -bottom-1.25 w-4 text-center leading-4 bg-black text-white aspect-square rounded-full text-[8px]">
