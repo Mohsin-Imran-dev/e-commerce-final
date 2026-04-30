@@ -10,6 +10,10 @@ const Product = () => {
   const [productData, setProductData] = useState(false);
   const [image, setImage] = useState("");
   const [size, setSize] = useState("");
+  
+  // Naya State Tab change karne ke liye
+  const [activeTab, setActiveTab] = useState("description"); 
+
   const fetchProductData = async () => {
     products.map((item) => {
       if (item._id === productId) {
@@ -23,20 +27,19 @@ const Product = () => {
   useEffect(() => {
     fetchProductData();
   }, [productId, products]);
+
   return productData ? (
     <div className="border-t-2 pt-10 transition-opacity ease-in duration-300 opacity-100">
-      {/* --------------- Product Data ---------------- */}
+      
+      {/* --------------- Product Data Section (Same as before) ---------------- */}
       <div className="flex gap-12 sm:gap-12 flex-col sm:flex-row">
-        {/* ------------------ Product Images ---------------- */}
         <div className="flex-1 flex flex-col-reverse gap-3 sm:flex-row">
           <div className="flex sm:flex-col overflow-x-auto sm:overflow-y-scroll justify-between sm:justify-normal sm:w-[18.7%] w-full">
             {productData.image.map((item, index) => (
               <img
                 key={index}
                 src={item}
-                onClick={() => {
-                  setImage(item);
-                }}
+                onClick={() => setImage(item)}
                 alt=""
                 className="w-[24%] sm:w-full sm:mb-3 shrink-0 cursor-pointer"
               />
@@ -47,7 +50,6 @@ const Product = () => {
           </div>
         </div>
 
-        {/* -------------- Product Info -------------- */}
         <div className="flex-1">
           <h1 className="font-medium text-2xl mt-2">{productData.name}</h1>
           <div className="flex items-center gap-1 mt-2">
@@ -58,34 +60,24 @@ const Product = () => {
             <img src={assets.star_dull_icon} className="w-3.5" alt="" />
             <p className="pl-2">(122)</p>
           </div>
-          <p className="mt-5 text-2xl font-medium">
-            {currency}. {productData.price}
-          </p>
+          <p className="mt-5 text-2xl font-medium">{currency}. {productData.price}</p>
           <p className="mt-5 text-gray-500 w-4/5">{productData.description}</p>
           <div className="flex flex-col gap-4 my-8">
             <p>Select Size</p>
             <div className="flex gap-2">
               {productData.sizes.map((item, index) => (
                 <button
-                  onClick={() => {
-                    setSize(item);
-                  }}
+                  onClick={() => setSize(item)}
                   className={`border border-gray-300 py-2 px-4 bg-gray-100 cursor-pointer ${item === size ? "border-orange-500" : ""}`}
                   key={index}
-                >
-                  {item}
-                </button>
+                >{item}</button>
               ))}
             </div>
           </div>
           <button
             className="bg-black text-white px-8 py-3 text-sm active:bg-gray-700"
-            onClick={() => {
-              addToCart(productData._id, size);
-            }}
-          >
-            ADD TO CART
-          </button>
+            onClick={() => addToCart(productData._id, size)}
+          >ADD TO CART</button>
           <hr className="mt-8 text-gray-200 sm:w-4/5" />
           <div className="text-sm text-gray-500 mt-5 flex flex-col gap-1">
             <p>100% Original Product</p>
@@ -94,28 +86,51 @@ const Product = () => {
           </div>
         </div>
       </div>
-      {/* --------------- Description & Review Section ----------------- */}
+
+      {/* --------------- Description & Review Section (MODIFIED) ----------------- */}
       <div className="mt-20">
         <div className="flex">
-          <b className="border border-gray-200 px-5 py-3 text-sm">
+          <b 
+            onClick={() => setActiveTab('description')} 
+            className={`border border-gray-200 px-5 py-3 text-sm cursor-pointer ${activeTab === 'description' ? 'bg-gray-100' : ''}`}
+          >
             Description
           </b>
-          <p className="border border-gray-200 px-5 py-3 text-sm">
+          <p 
+            onClick={() => setActiveTab('review')} 
+            className={`border border-gray-200 px-5 py-3 text-sm cursor-pointer ${activeTab === 'review' ? 'bg-gray-100 font-bold' : ''}`}
+          >
             Reviews (122)
           </p>
         </div>
+
         <div className="flex flex-col gap-4 border-gray-200 border px-6 py-6 text-sm text-gray-500">
-          <p>
-            An ecommerce site for selling products online. This is a simple
-            ecommerce site built with React and Node.js.
-          </p>
-          <p>
-            E-commerce websites typically allow customers to browse products,
-            add them to a shopping cart, and complete the purchase process
-            online.
-          </p>
+          {activeTab === 'description' ? (
+            /* Description Content */
+            <>
+              <p>An ecommerce site for selling products online. Built with MERN stack.</p>
+              <p>{productData.description}</p>
+            </>
+          ) : (
+            /* Dummy Reviews Content */
+            <div className="flex flex-col gap-4">
+              <div className="border-b pb-2">
+                <p className="font-bold text-gray-800">Mohsin Imran</p>
+                <p>Great quality! The fabric is very comfortable and fits perfectly.</p>
+              </div>
+              <div className="border-b pb-2">
+                <p className="font-bold text-gray-800">Ali Khan</p>
+                <p>Value for money. The delivery was also very fast.</p>
+              </div>
+              <div className="border-b pb-2">
+                <p className="font-bold text-gray-800">Sara Ahmed</p>
+                <p>The color is exactly as shown in the pictures. Highly recommended!</p>
+              </div>
+            </div>
+          )}
         </div>
       </div>
+
       {/* Display Related Products */}
       <RelatedProducts
         category={productData.category}
