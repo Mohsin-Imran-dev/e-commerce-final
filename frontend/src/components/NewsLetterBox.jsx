@@ -1,9 +1,39 @@
 import React from "react";
+import { useState, useContext } from "react";
+import axios from "axios";
+import { toast } from "react-toastify";
+import {ShopContext} from "../context/ShopContext";
 
 const NewsLetterBox = () => {
-  const onSubmitHandler = (e) => {
+  const [email, setEmail] = useState("");
+  const { backendUrl, token } = useContext(ShopContext);
+
+  const onSubmitHandler = async (e) => {
     e.preventDefault();
+    try {
+      const response = await axios.post(
+        backendUrl + "/api/user/subscribe",
+        {
+          email,
+        },
+        {
+          headers: {
+            token,
+          },
+        },
+      );
+
+      if (response.data.success) {
+        toast.success(response.data.message);
+        setEmail("");
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
   };
+
   return (
     <div className="text-center ">
       <p className="text-2x1 font-medium text-gray-800">
@@ -22,6 +52,8 @@ const NewsLetterBox = () => {
           type="email"
           placeholder="Enter your email"
           required
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
         />
         <button
           className="bg-black text-white text-xs sm:text-sm md:text-base px-10 py-4 cursor-pointer"
@@ -34,4 +66,4 @@ const NewsLetterBox = () => {
   );
 };
 
-export default NewsLetterBox
+export default NewsLetterBox;

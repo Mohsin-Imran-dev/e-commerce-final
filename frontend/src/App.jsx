@@ -18,11 +18,14 @@ import { ShopContext } from "./context/ShopContext";
 
 const App = () => {
   const { token } = useContext(ShopContext);
+
   return (
     <div className="px-4 sm:px-[5vw] md:px-[7vw] lg:px-[9vw]">
       <ToastContainer />
-      <Navbar />
-      <SearchBar />
+
+      {token && <Navbar />}
+      {token && <SearchBar />}
+
       <Routes>
         {!token ? (
           <>
@@ -30,7 +33,6 @@ const App = () => {
             <Route path="*" element={<Navigate to="/login" />} />
           </>
         ) : (
-          /* Agar token HAI, toh saare routes kaam karenge */
           <>
             <Route path="/" element={<Home />} />
             <Route path="/collection" element={<Collection />} />
@@ -41,12 +43,12 @@ const App = () => {
             <Route path="/place-order" element={<PlaceOrder />} />
             <Route path="/orders" element={<Orders />} />
             <Route path="/verify" element={<Verify />} />
-            {/* Agar logged in user galti se /login par jaye toh use home bhej dein */}
             <Route path="/login" element={<Navigate to="/" />} />
           </>
         )}
       </Routes>
-      <Footer />
+
+      {token && <Footer />}
     </div>
   );
 };
